@@ -2,6 +2,10 @@
 
 ## Version history of node-epics-pcas
 
+### v0.0.2
+
+- Supports Linux platform
+
 ### v0.0.1
 
 **Initial version:**

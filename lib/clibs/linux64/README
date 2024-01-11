@@ -1,0 +1,6 @@
+The shared library is built with wrapper.h and wrapper.cpp in the following environment,
+
+* Debian Linux 10 (buster), x86_64
+* GNU Make 4.2.1
+* gcc/g++ 8.3.0
+* EPICS base 3.15.9
