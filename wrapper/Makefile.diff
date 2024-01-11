@@ -1,0 +1,14 @@
+LIBSRCS += caServerIO.cc
+LIBSRCS += casIntfIO.cc
+LIBSRCS += casDGIntfIO.cc
+LIBSRCS += casStreamIO.cc
+LIBSRCS += ipIgnoreEntry.cc
+
++ # C wrapper
++ LIBSRCS += wrapper.cpp
+
+# There is a bug in some vxWorks compilers that these work around:
+ifeq ($(VXWORKS_VERSION)$(filter -mcpu=604,$(ARCH_DEP_CFLAGS)), 6.6-mcpu=604)
+  casDGIntfOS_CXXFLAGS = -fno-inline
+  casStreamOS_CXXFLAGS = -fno-inline
+endif

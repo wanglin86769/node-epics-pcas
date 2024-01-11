@@ -1,0 +1,2 @@
+wrapper.h and wrapper.cpp are C wrapper files which are intended to be placed into base-3.15.9/src/ca/legacy/pcas/generic directory and built into the PCAS shared library.
+

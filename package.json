@@ -1,0 +1,29 @@
+{
+  "name": "node-epics-pcas",
+  "version": "0.0.1",
+  "description": "EPICS Portable Channel Access Server for Node.js",
+  "keywords": [
+    "EPICS",
+    "Channel Access",
+    "CAS",
+    "PCAS",
+    "Node.js",
+    "JavaScript",
+    "FFI"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/wanglin86769/node-epics-pcas.git"
+  },
+  "homepage": "https://github.com/wanglin86769/node-epics-pcas",
+  "author": "Lin Wang <wanglin@ihep.ac.cn>",
+  "main": "index.js",
+  "scripts": {
+    "start": "node main.js",
+    "dev": "nodemon main.js"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "koffi": "^2.7.1"
+  }
+}
