@@ -54,12 +54,12 @@ function createServer(pvList, read, write)
 ```
 
 * pvList: PV list
-* read: read function for PV whose **scan** field is greater than 0 and **soft** field is false
-* write: write function for PV whose **soft** field is false
+* read: the read function for PV whose **scan** field is greater than 0 and **soft** field is false
+* write: the write function for PV whose **soft** field is false
 
 Following is the description of PV fields,
 
-| field  | required | default | description |
+| Field  | Required | Default | Description |
 |--------|----------|---------|-------------|
 | name   | Yes      |         |             |
 | type   |          | 'float' | 'int', 'float', 'double', 'string' or 'enum'  |
