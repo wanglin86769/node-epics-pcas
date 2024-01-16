@@ -204,9 +204,13 @@ void Data::initValue(aitEnum type, int count, void *buffer) {
     value = new Value(type, count, buffer);
 }
 
-void Data::setValue(Value *value) {
+void Data::copyValue(Value *value) {
     void *buffer = value->getBuffer();
     this->value->copyBuffer(buffer);
+}
+
+void Data::setValue(Value *value) {
+    this->value = value;
 }
 
 Value * Data::getValue() {
@@ -363,7 +367,7 @@ void Driver::setParam(std::string name, Value *value) {
     }
 
     pvDB[name]->setMask(pvDB[name]->getMask() | info->checkValue(value));
-    pvDB[name]->setValue(value);
+    pvDB[name]->copyValue(value);
     pvDB[name]->setTimeStampToCurrent();
     if(pvDB[name]->getMask()) {
         pvDB[name]->setFlag(true);

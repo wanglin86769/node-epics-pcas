@@ -132,6 +132,7 @@ public:
     Data();
     void initValue(aitEnum type, int count);
     void initValue(aitEnum type, int count, void *buffer);
+    void copyValue(Value *value);
     void setValue(Value *value);
     Value * getValue();
     void setAlarm(epicsAlarmCondition alarm);
