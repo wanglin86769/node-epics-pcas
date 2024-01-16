@@ -83,6 +83,16 @@ Value::Value(aitEnum type, int count, void *buffer) {
     memcpy(this->buffer, buffer, bufferSize);
 }
 
+Value::Value(Value &obj) {
+    this->type = obj.type;
+    this->count = obj.count;
+
+    // Initialize the buffer field
+    int bufferSize = calcBufferSize();
+    this->buffer = malloc(bufferSize);
+    memcpy(this->buffer, obj.buffer, bufferSize);
+}
+
 void Value::setType(aitEnum type) {
     this->type = type;
 }
@@ -327,7 +337,10 @@ Value * Driver::getParam(std::string name) {
         std::cout << "getParam(): pv=" << name << ", value=" << *value << std::endl;
     }
 
-    return value;
+    // Clone a new value instance, which will be released later
+    Value *cloneValue = new Value(*value);
+
+    return cloneValue;
 }
 
 void Driver::setParam(std::string name, Value *value) {

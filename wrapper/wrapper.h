@@ -109,6 +109,7 @@ public:
     Value();
     Value(aitEnum type, int count);
     Value(aitEnum type, int count, void *buffer);
+    Value(Value &obj);
     void setType(aitEnum type);
     aitEnum getType();
     void setCount(int count);
