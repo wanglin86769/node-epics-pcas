@@ -248,6 +248,10 @@ void Data::setTimeStamp(epicsTimeStamp *time) {
     this->time = time;
 }
 
+void Data::setTimeStampToCurrent() {
+    epicsTimeGetCurrent(this->time);
+}
+
 epicsTimeStamp * Data::getTimeStamp() {
     return time;
 }
@@ -360,7 +364,7 @@ void Driver::setParam(std::string name, Value *value) {
 
     pvDB[name]->setMask(pvDB[name]->getMask() | info->checkValue(value));
     pvDB[name]->setValue(value);
-    pvDB[name]->setTimeStamp(getEPICSTimeStamp());
+    pvDB[name]->setTimeStampToCurrent();
     if(pvDB[name]->getMask()) {
         pvDB[name]->setFlag(true);
     }

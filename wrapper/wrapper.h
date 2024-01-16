@@ -143,6 +143,7 @@ public:
     void setFlag(bool flag);
     bool getFlag();
     void setTimeStamp(epicsTimeStamp *time);
+    void setTimeStampToCurrent();
     epicsTimeStamp * getTimeStamp();
     friend std::ostream & operator << (std::ostream &out, const Data &data);
 private:
