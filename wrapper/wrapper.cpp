@@ -55,6 +55,41 @@ epicsTimeStamp * getEPICSTimeStamp() {
 
 
 /** 
+ * aitString destructor for putRef()
+ */
+class aitStringDestructor: public gddDestructor {
+public:
+	aitStringDestructor() {}
+	void run(void *v) { delete [] (aitString *)v; }
+};
+
+
+/** 
+ * Value buffer destructor for putRef()
+ */
+class valueBufferDestructor: public gddDestructor {
+public:
+	valueBufferDestructor() {}
+	void run(void *v) { free(v); }
+};
+
+
+/** 
+ * Release the dynamically allocated Value instance
+ */
+void releaseValue(Value *value) {
+    delete value;
+}
+void releaseBuffer(Value *value) {
+    free(value->getBuffer());
+}
+void releaseValueAndBuffer(Value *value) {
+    free(value->getBuffer());
+    delete value;
+}
+
+
+/** 
  * Value class
  */
 Value::Value() {
@@ -375,6 +410,9 @@ void Driver::setParam(std::string name, Value *value) {
     epicsAlarmSeverity severity;
     info->checkAlarm(value, &alarm, &severity);
     setParamStatus(name, alarm, severity);
+
+    // Release value and buffer
+    releaseValueAndBuffer(value);
 }
 
 void Driver::setParamStatus(std::string name, epicsAlarmCondition alarm, epicsAlarmSeverity severity) {
@@ -911,7 +949,7 @@ caStatus SimplePV::getEnums(gdd &enums) {
     for(int i = 0; i < count; i++) {
         *(d + i) = aitString(info->getEnums()[i].c_str());
     }
-    enums.putRef(d);
+    enums.putRef(d, new aitStringDestructor());
 
     return S_casApp_success;
 };
@@ -950,12 +988,15 @@ void SimplePV::updateValue(Data *data) {
     Value *value = data->getValue();
     void *buffer = value->getBuffer();
 
+    // Clone a new value instance, which will be released later
+    Value *cloneValue = new Value(*value);
+
     if(count > 1) {
         gddValue->setDimension(1);
         gddValue->setBound(0, 0, count);
     }
 
-    putValueToGDD(gddValue, value);
+    putValueToGDD(gddValue, cloneValue);
     gddValue->setTimeStamp(data->getTimeStamp());
     gddValue->setStatSevr(data->getAlarm(), data->getSeverity());
 
@@ -1015,7 +1056,7 @@ void SimplePV::updateValue(Data *data) {
                 for(int i = 0; i < count; i++) {
                     *(d + i) = aitString((char *)buffer + i * MAX_STRING_SIZE);
                 }
-                gddCtrl[2].putRef(d);
+                gddCtrl[2].putRef(d, new aitStringDestructor());
             }
             break;
         default:
@@ -1097,7 +1138,8 @@ Value * SimplePV::getValueFromGDD(const gdd *pGDD) {
                     pGDD->get(d);
                     for(int i = 0; i < elementCount; i++) {
                         memcpy((char *)buffer + MAX_STRING_SIZE * i, (d + i)->string(), MAX_STRING_SIZE);
-                    }   
+                    }
+                    delete [] d; 
                 }
                 break;
             case aitEnumEnum16:
@@ -1136,21 +1178,22 @@ void SimplePV::putValueToGDD(gdd *pGDD, Value *value) {
                 pGDD->putConvert(*(int *)buffer);
                 break;
             default:
-                std::cout << "getValueFromGDD(): Unknown primitiveType " << primitiveType << std::endl;
+                std::cout << "putValueToGDD(): Unknown primitiveType " << primitiveType << std::endl;
                 break;
         }
+        releaseValueAndBuffer(value);
     } else {
         pGDD->setDimension(1);
         pGDD->setBound(0, 0, count);
         switch(primitiveType) {
             case aitEnumInt32:
-                pGDD->putRef((int *)buffer);
+                pGDD->putRef((int *)buffer, new valueBufferDestructor());
                 break;
             case aitEnumFloat32:
-                pGDD->putRef((float *)buffer);
+                pGDD->putRef((float *)buffer, new valueBufferDestructor());
                 break;
             case aitEnumFloat64:
-                pGDD->putRef((double *)buffer);
+                pGDD->putRef((double *)buffer, new valueBufferDestructor());
                 break;
             case aitEnumString:
                 {
@@ -1158,16 +1201,18 @@ void SimplePV::putValueToGDD(gdd *pGDD, Value *value) {
                     for(int i = 0; i < count; i++) {
                         *(d + i) = aitString((char *)buffer + i * MAX_STRING_SIZE);
                     }
-                    pGDD->putRef(d);
+                    pGDD->putRef(d, new aitStringDestructor());
+                    releaseBuffer(value);
                 }
                 break;
             case aitEnumEnum16:
-                pGDD->putRef((int *)buffer);
+                pGDD->putRef((int *)buffer, new valueBufferDestructor());
                 break;
             default:
-                std::cout << "getValueFromGDD(): Unknown primitiveType " << primitiveType << std::endl;
+                std::cout << "putValueToGDD(): Unknown primitiveType " << primitiveType << std::endl;
                 break;
         }
+        releaseValue(value);
     }
 }
 
@@ -1510,6 +1555,9 @@ void getParam(const char* name, SimpleValue* simpleValue) {
     simpleValue->type = value->getType();
     simpleValue->count = value->getCount();
     simpleValue->buffer = value->getBuffer();
+
+    // Only release Value here, and buffer will be released in Node.js using koffi.free()
+    releaseValue(value);
 }
 
 
