@@ -358,12 +358,11 @@ void Driver::setParam(std::string name, Value *value) {
 
     if(debugLevel >= 2) {
         // The type and count in value is not guaranteed to be consistent with PV info
-        Value *valueToPrint = new Value();
-        valueToPrint->setType(info->getValue()->getType());
-        valueToPrint->setCount(info->getValue()->getCount());
-        valueToPrint->setBuffer(value->getBuffer());
-        std::cout << "setParam(): pv=" << name << ", value=" << *valueToPrint << std::endl;
-        delete valueToPrint;
+        Value valueToPrint;
+        valueToPrint.setType(info->getValue()->getType());
+        valueToPrint.setCount(info->getValue()->getCount());
+        valueToPrint.setBuffer(value->getBuffer());
+        std::cout << "setParam(): pv=" << name << ", value=" << valueToPrint << std::endl;
     }
 
     pvDB[name]->setMask(pvDB[name]->getMask() | info->checkValue(value));
