@@ -409,13 +409,13 @@ Value * Driver::read(std::string name) {
     PVInfo *info = pv->getInfo();
     Value *value = new Value(info->getValue()->getType(), info->getValue()->getCount());
 
-    SimpleValue *simpleValue = new SimpleValue();
-    simpleValue->type = value->getType();
-    simpleValue->count = value->getCount();
-    simpleValue->buffer = value->getBuffer();
+    SimpleValue simpleValue;
+    simpleValue.type = value->getType();
+    simpleValue.count = value->getCount();
+    simpleValue.buffer = value->getBuffer();
 
     // Read data from Node.js
-    readCallback(name.c_str(), simpleValue);
+    readCallback(name.c_str(), &simpleValue);
 
     if(debugLevel >= 2) {
         std::cout << "Driver::read(): pv=" << name << ", value=" << *value << std::endl;
@@ -432,13 +432,13 @@ bool Driver::write(std::string name, Value *value) {
         std::cout << "Driver::write(): pv=" << name << ", value=" << *value << std::endl;
     }
 
-    SimpleValue *simpleValue = new SimpleValue();
-    simpleValue->type = value->getType();
-    simpleValue->count = value->getCount();
-    simpleValue->buffer = value->getBuffer();
+    SimpleValue simpleValue;
+    simpleValue.type = value->getType();
+    simpleValue.count = value->getCount();
+    simpleValue.buffer = value->getBuffer();
 
     // Write data to Node.js
-    writeCallback(name.c_str(), simpleValue);
+    writeCallback(name.c_str(), &simpleValue);
     return true;
 }
 
