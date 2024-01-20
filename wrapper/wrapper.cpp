@@ -59,8 +59,10 @@ epicsTimeStamp * getEPICSTimeStamp() {
  */
 class aitStringDestructor: public gddDestructor {
 public:
-	aitStringDestructor() {}
-	void run(void *v) { delete [] (aitString *)v; }
+	aitStringDestructor(void) {}
+	void run(void *v) { 
+        delete [] (aitString *)v; 
+    }
 };
 
 
@@ -69,8 +71,10 @@ public:
  */
 class valueBufferDestructor: public gddDestructor {
 public:
-	valueBufferDestructor() {}
-	void run(void *v) { free(v); }
+	valueBufferDestructor(void) {}
+	void run(void *v) { 
+        free(v);
+    }
 };
 
 
@@ -1067,6 +1071,7 @@ void SimplePV::updateValue(Data *data) {
 
     if(gddCtrl != NULL) {
         myPostEvent(data->getMask(), *gddCtrl);
+        gddCtrl->unreference();
     }
 }
 
@@ -1226,6 +1231,10 @@ void SimplePV::putGDDToGDD(gdd *pGDD, gdd *value) {
     }
     
     pGDD->put(value);
+
+    if(value) {
+        value->unreference();
+    }
 }
 
 void SimplePV::myPostEvent(int mask, gdd &value)
