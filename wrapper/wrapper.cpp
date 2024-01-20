@@ -1056,11 +1056,17 @@ void SimplePV::updateValue(Data *data) {
 
                 putGDDToGDD(&gddCtrl[1], gddValue);
 
-                aitString *d = new aitString[count];
-                for(int i = 0; i < count; i++) {
-                    *(d + i) = aitString((char *)buffer + i * MAX_STRING_SIZE);
+                int enumsCount = info->getEnums().size();
+                aitString *d = new aitString[enumsCount];
+                for(int i = 0; i < enumsCount; i++) {
+                    *(d + i) = aitString(info->getEnums()[i].c_str());
                 }
-                gddCtrl[2].putRef(d, new aitStringDestructor());
+
+                // This statement with destructor will crash the server tool, so comment it
+                // gddCtrl[2].putRef(d, new aitStringDestructor());
+
+                // Use this statement without destructor instead
+                gddCtrl[2].putRef(d);
             }
             break;
         default:
