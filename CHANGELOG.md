@@ -2,6 +2,11 @@
 
 ## Version history of node-epics-pcas
 
+### v0.1.1
+
+- Release Value and buffer when not used anymore in order to reduce memory leak
+- Add unreference() to release array pointer when GDD is not used anymore in order to reduce memory leak
+
 ### v0.1.0
 
 - Supports macOS platform
