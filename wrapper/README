@@ -1,2 +1,3 @@
 wrapper.h and wrapper.cpp are C wrapper files which are intended to be placed into base-3.15.9/src/ca/legacy/pcas/generic directory and built into the PCAS shared library.
 
+The readline dependency is removed from the build by modifying base-3.15.9/configure/os/CONFIG_SITE.Common.linux-x86_64, because the shared library has been upgraded from libreadline.so.7 to libreadline.so.8

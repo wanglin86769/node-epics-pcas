@@ -4,3 +4,5 @@ The shared library is built with wrapper.h and wrapper.cpp in the following envi
 * GNU Make 4.2.1
 * gcc/g++ 8.3.0
 * EPICS base 3.15.9
+
+The generated shared libraries is modified with the patchLib.sh script.
