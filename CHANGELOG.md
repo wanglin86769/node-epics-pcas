@@ -2,6 +2,11 @@
 
 ## Version history of node-epics-pcas
 
+### v0.1.2
+
+- Fix the issue that it is not runnable on Linux because the RUNPATH of the shared libraries is incorrect.
+- Remove the readline dependency from the EPICS build.
+
 ### v0.1.1
 
 - Release Value and buffer when not used anymore in order to reduce memory leak
