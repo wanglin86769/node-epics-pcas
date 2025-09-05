@@ -166,6 +166,12 @@ int Value::calcBufferSize() {
     if(type == aitEnumInvalid || count == 0) return 0;
     int bufferSize;
     switch(type) {
+        case aitEnumInt8:
+            bufferSize = count * sizeof(char);
+            break;
+        case aitEnumInt16:
+            bufferSize = count * sizeof(short);
+            break;
         case aitEnumInt32:
             bufferSize = count * sizeof(int);
             break;
@@ -193,6 +199,12 @@ std::ostream & operator << (std::ostream &out, const Value &value) {
     if(value.count > 1)  out << "[";
     for(int i = 0; i < value.count; i++) {
         switch(value.type) {
+            case aitEnumInt8:
+                out << *((char *)value.buffer + i);
+                break;
+            case aitEnumInt16:
+                out << *((short *)value.buffer + i);
+                break;
             case aitEnumInt32:
                 out << *((int *)value.buffer + i);
                 break;
@@ -628,6 +640,26 @@ unsigned int PVInfo::checkValue(Value *newValue) {
     
     aitEnum type = value->getType();
     switch(type) {
+        case aitEnumInt8:
+            if(abs(*(char *)mlst->getBuffer() - *(char *)buffer) > mdel) {
+                mask |= DBE_VALUE;
+                *(char *)mlst->getBuffer() = *(char *)buffer;
+            }
+            if(abs(*(char *)alst->getBuffer() - *(char *)buffer) > adel) {
+                mask |= DBE_LOG;
+                *(char *)alst->getBuffer() = *(char *)buffer;
+            }
+            break;
+        case aitEnumInt16:
+            if(abs(*(short *)mlst->getBuffer() - *(short *)buffer) > mdel) {
+                mask |= DBE_VALUE;
+                *(short *)mlst->getBuffer() = *(short *)buffer;
+            }
+            if(abs(*(short *)alst->getBuffer() - *(short *)buffer) > adel) {
+                mask |= DBE_LOG;
+                *(short *)alst->getBuffer() = *(short *)buffer;
+            }
+            break;
         case aitEnumInt32:
             if(abs(*(int *)mlst->getBuffer() - *(int *)buffer) > mdel) {
                 mask |= DBE_VALUE;
@@ -698,6 +730,12 @@ void PVInfo::checkAlarm(Value *newValue, epicsAlarmCondition *alarm, epicsAlarmS
     } 
 
     switch(type) {
+        case aitEnumInt8:
+            _checkNumericAlarm(*(char *)buffer, alarm, severity);
+            break;
+        case aitEnumInt16:
+            _checkNumericAlarm(*(short *)buffer, alarm, severity);
+            break;
         case aitEnumInt32:
             _checkNumericAlarm(*(int *)buffer, alarm, severity);
             break;
@@ -1006,6 +1044,32 @@ void SimplePV::updateValue(Data *data) {
 
     gdd *gddCtrl;
     switch(type) {
+        case aitEnumInt8:
+            gddCtrl = gddApplicationTypeTable::AppTable().getDD(gddAppType_dbr_ctrl_char);
+            gddCtrl[1].putConvert(aitString(info->getUnits().c_str()));
+            gddCtrl[2].putConvert(info->getLowWarning());
+            gddCtrl[3].putConvert(info->getHighWarning());
+            gddCtrl[4].putConvert(info->getLowAlarm());
+            gddCtrl[5].putConvert(info->getHighAlarm());
+            gddCtrl[6].putConvert(info->getLopr());
+            gddCtrl[7].putConvert(info->getHopr());
+            gddCtrl[8].putConvert(info->getLopr());
+            gddCtrl[9].putConvert(info->getHopr());
+            putGDDToGDD(&gddCtrl[10], gddValue);
+            break;
+        case aitEnumInt16:
+            gddCtrl = gddApplicationTypeTable::AppTable().getDD(gddAppType_dbr_ctrl_short);
+            gddCtrl[1].putConvert(aitString(info->getUnits().c_str()));
+            gddCtrl[2].putConvert(info->getLowWarning());
+            gddCtrl[3].putConvert(info->getHighWarning());
+            gddCtrl[4].putConvert(info->getLowAlarm());
+            gddCtrl[5].putConvert(info->getHighAlarm());
+            gddCtrl[6].putConvert(info->getLopr());
+            gddCtrl[7].putConvert(info->getHopr());
+            gddCtrl[8].putConvert(info->getLopr());
+            gddCtrl[9].putConvert(info->getHopr());
+            putGDDToGDD(&gddCtrl[10], gddValue);
+            break;
         case aitEnumInt32:
             gddCtrl = gddApplicationTypeTable::AppTable().getDD(gddAppType_dbr_ctrl_long);
             gddCtrl[1].putConvert(aitString(info->getUnits().c_str()));
@@ -1092,6 +1156,20 @@ Value * SimplePV::getValueFromGDD(const gdd *pGDD) {
     aitEnum primitiveType = pGDD->primitiveType();
     if(pGDD->isScalar()) {
         switch(primitiveType) {
+            case aitEnumInt8:
+                {
+                    signed char d;
+                    pGDD->getConvert(d);
+                    *(signed char *)buffer = d;
+                }
+                break;
+            case aitEnumInt16:
+                {
+                    short d;
+                    pGDD->getConvert(d);
+                    *(short *)buffer = d;
+                }
+                break;
             case aitEnumInt32:
                 {
                     int d;
@@ -1134,6 +1212,12 @@ Value * SimplePV::getValueFromGDD(const gdd *pGDD) {
     } else {
         aitUint32 elementCount = pGDD->getDataSizeElements();
         switch(primitiveType) {
+            case aitEnumInt8:
+                pGDD->get((char *)buffer);
+                break;
+            case aitEnumInt16:
+                pGDD->get((short *)buffer);
+                break;
             case aitEnumInt32:
                 pGDD->get((int *)buffer);
                 break;
@@ -1173,6 +1257,12 @@ void SimplePV::putValueToGDD(gdd *pGDD, Value *value) {
     aitEnum primitiveType = pGDD->primitiveType();
     if(pGDD->isScalar()) {
         switch(primitiveType) {
+            case aitEnumInt8:
+                pGDD->putConvert(*(char *)buffer);
+                break;
+            case aitEnumInt16:
+                pGDD->putConvert(*(short *)buffer);
+                break;
             case aitEnumInt32:
                 pGDD->putConvert(*(int *)buffer);
                 break;
@@ -1197,6 +1287,12 @@ void SimplePV::putValueToGDD(gdd *pGDD, Value *value) {
         pGDD->setDimension(1);
         pGDD->setBound(0, 0, count);
         switch(primitiveType) {
+            case aitEnumInt8:
+                pGDD->putRef((signed char *)buffer, new valueBufferDestructor());
+                break;
+            case aitEnumInt16:
+                pGDD->putRef((short *)buffer, new valueBufferDestructor());
+                break;
             case aitEnumInt32:
                 pGDD->putRef((int *)buffer, new valueBufferDestructor());
                 break;
@@ -1354,6 +1450,12 @@ void printPVDef(pvDef *pv) {
     }
     for(int i = 0; i < pv->count; i++) {
         switch(aitEnum(pv->type)) {
+            case aitEnumInt8:
+                std::cout << *((char *)pv->value + i);
+                break;
+            case aitEnumInt16:
+                std::cout << *((short *)pv->value + i);
+                break;
             case aitEnumInt32:
                 std::cout << *((int *)pv->value + i);
                 break;

@@ -62,7 +62,7 @@ Following is the description of PV fields,
 | Field  | Required | Default | Description |
 |--------|----------|---------|-------------|
 | name   | Yes      |         |             |
-| type   |          | 'float' | 'int', 'float', 'double', 'string' or 'enum'  |
+| type   |          | 'float' | 'char', 'short', 'int', 'float', 'double', 'string' or 'enum'  |
 | count  |          | 1       |             |
 | scan   |          | 0       |             |
 | enums  |          | []      |             |
