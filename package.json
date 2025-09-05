@@ -1,6 +1,6 @@
 {
   "name": "node-epics-pcas",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "EPICS Portable Channel Access Server for Node.js",
   "keywords": [
     "EPICS",
@@ -24,6 +24,6 @@
   },
   "license": "MIT",
   "dependencies": {
-    "koffi": "^2.7.2"
+    "koffi": "^2.14.0"
   }
 }
