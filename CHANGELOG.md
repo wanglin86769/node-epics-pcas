@@ -2,6 +2,11 @@
 
 ## Version history of node-epics-pcas
 
+### v0.1.3
+
+- Add char and short data types
+- Fix the issue that shared libraries cannot be loaded on MacOS
+
 ### v0.1.2
 
 - Fix the issue that it is not runnable on Linux because the RUNPATH of the shared libraries is incorrect.
