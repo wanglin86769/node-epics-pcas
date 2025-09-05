@@ -1,5 +1,15 @@
 # EPICS Portable Channel Access Server for Node.js
 
+## ⚠️ Disclaimer
+
+This software tool is intended **for web or Node.js developers** who wish to **quickly create EPICS PVs and test EPICS clients** during development. It is **not suitable for production environments**.
+
+Please note that there is a **subtle memory leak** issue. The root cause has not been fully identified, it may stem from the C++ wrapper layer, or the interaction between the code and the [koffi](https://www.npmjs.com/package/koffi) FFI library.
+
+As such, **long-running deployments are discouraged**, and users should monitor memory usage if used beyond short-term testing.
+
+## Introduction
+
 **node-epics-pcas** is an EPICS PCAS library for Node.js, it is a FFI wrapper that talks to the PCAS shared library using a third-party Node.js FFI package called koffi.
 
 This project is inspired by pcaspy in the following link and the implementation is very similar to pcaspy, the main difference is that most of the logic has been moved from the scripting language to C++.
